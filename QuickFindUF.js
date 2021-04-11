@@ -1,5 +1,8 @@
 //Considered the "eager" approach
 //At most 2N+2 array accesses
+//Quadratic Time is BAD
+
+//Does not scale
 
 class QuickFindUF {
   constructor(idArray) {
@@ -7,6 +10,7 @@ class QuickFindUF {
   }
 
   //boolean
+  //This method is fast in this version
   connected(num1, num2) {
     return num1 === num2;
   }
