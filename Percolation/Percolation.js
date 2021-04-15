@@ -39,9 +39,9 @@ class Percolation {
 
   isOpenFast(row, col) {
     //faster implementation then looping through array
-    let node = this._findNodeNumber(row, col);
-    if (node < this.gridSize * this.gridSize) {
-      return this.grid.nodes[node].isOpen;
+    let nodeNumber = this._findNodeNumber(row, col);
+    if (nodeNumber < this.gridSize * this.gridSize) {
+      return this.grid.nodes[nodeNumber].isOpen;
     } else {
       throw new RangeError(
         `The values for row and col should be within the bound of ${this.gridSize}, ${this.gridSize}`
@@ -50,8 +50,22 @@ class Percolation {
   }
 
   // is the site (row, col) "connected to the top row"?
+  // currently recurse your way straight up to check for connection
   isFull(row, col) {
-    //recurse until we find no open nodes, or reach the top row
+    let answer;
+    let currentNode = this._findNode(row, col);
+    let nodeAbove = this._nodeAbove(row, col);
+    if (currentNode.isOpen && row === 0) {
+      console.log(`Current Node Open: ${currentNode.isOpen}, Row: ${row}`);
+      answer = true;
+      return true;
+    }
+
+    if (nodeAbove.isOpen === false) {
+      return false;
+    }
+
+    return this.isFull(nodeAbove.row, nodeAbove.col);
   }
 
   // returns the number of open sites
@@ -67,35 +81,38 @@ class Percolation {
   }
 
   _findNode(row, col) {
-    return this.grid.nodes[row * this.gridSize + col];
+    return this.grid.nodes[this._findNodeNumber(row, col)];
   }
 
   _findNodeNumber(row, col) {
     return row * this.gridSize + col;
   }
 
-  _checkDirection(row, col) {
+  _nodeAbove(row, col) {
     let nodeAbove = this._findNode(row - 1, col);
+    return nodeAbove;
 
-    let nodeBelow = this._findNode(row + 1, col);
+    // let nodeLeft = this._findNode(row, col - 1);
 
-    let nodeLeft = this._findNode(row, col - 1);
+    // let nodeRight = this._findNode(row, col + 1);
 
-    let nodeRight = this._findNode(row, col + 1);
+    // let nodeBelow = this._findNode(row + 1, col);
 
-    nodeAbove.isOpen;
-    nodeBelow.isOpen;
-    nodeLeft.isOpen;
-    nodeRight.isOpen;
+    // nodeAbove.isOpen;
+    // nodeBelow.isOpen;
+    // nodeLeft.isOpen;
+    // nodeRight.isOpen;
   }
 }
 
-const perc = new Percolation(3, 0);
+const perc = new Percolation(4, 0);
 console.log(perc.isOpenFast(0, 1));
 console.log(perc.numberOfOpenSites());
 perc._print();
 perc.open(0, 1);
 perc.open(1, 1);
 perc.open(2, 1);
+perc.open(3, 1);
+
 perc._print();
-perc._checkDirection(1, 1);
+console.log(perc.isFull(3, 1));
