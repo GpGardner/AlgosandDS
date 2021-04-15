@@ -4,4 +4,8 @@ module.exports = class Node {
     this.col = col;
     this.isOpen = isOpen;
   }
+
+  _print() {
+    console.log(`row: ${this.row}, col: ${this.col}, isOpen: ${this.isOpen}`);
+  }
 };
