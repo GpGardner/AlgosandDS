@@ -2,6 +2,7 @@ const Node = require('./Node');
 
 module.exports = class Grid {
   nodes = [];
+  openNodes = 0;
   rows = 0;
   columns = 0;
 
@@ -14,6 +15,7 @@ module.exports = class Grid {
           this.columns++;
         }
         let isOpen = Math.random() < this.randomVal;
+        if (isOpen) this.openNodes++;
         this.nodes.push(new Node(i, j, isOpen));
       }
     }
