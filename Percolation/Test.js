@@ -19,11 +19,16 @@ const perc = new Percolation(4, 0);
 // perc._print();
 perc.open(0, 0);
 perc.open(1, 0);
-perc.open(1, 1);
+perc.open(2, 0);
+perc.open(3, 0);
+
+perc.open(3, 1);
+
 // perc.open(1, 2);
-perc.open(1, 3);
+// perc.open(3, 0);
 
 perc._print();
+console.log(perc.percolates());
 
 perc.grid.nodes.forEach((node) => {
   let string = node._print();
