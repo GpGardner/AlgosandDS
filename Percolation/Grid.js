@@ -1,4 +1,5 @@
 const Node = require('./Node');
+const colors = require('colors/safe');
 
 module.exports = class Grid {
   nodes = [];
@@ -34,8 +35,9 @@ module.exports = class Grid {
     let count = 0;
     let color = '';
     this.nodes.forEach((node) => {
-      node.isOpen ? (color = '\u001b[1;32m') : (color = '\u001b[1;31m');
-      string += `${color} [${node.row}, ${node.col}]`;
+      string += node.isOpen
+        ? colors.green(`[${node.col}, ${node.row}]`)
+        : colors.red(`[${node.col}, ${node.row}]`);
       count++;
       if (count === this.columns) {
         console.log(string);
