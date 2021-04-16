@@ -3,20 +3,19 @@ const Grid = require('./Grid');
 module.exports = class Percolation {
   //creates a grid
   constructor(n, randomVal) {
-    this.grid = new Grid(n, randomVal);
+    this.grid = new Grid(n);
     this.gridSize = n;
   }
 
   // opens the site (row, col) if it is not open already
   open(row, col) {
-    
     let node = this._findNode(row, col);
-    if (this.isOpenFast(row, col) === false) {
+    if (this._isOpen(row, col) === false) {
       node.isOpen = true;
+      this.grid.openNodes++;
     } else {
       throw new Error(`Node[${node.row}, ${node.col}] is already open`);
     }
-    console.log(`Node: ${node.row}, ${node.col}`);
   }
 
   /*
@@ -37,18 +36,6 @@ module.exports = class Percolation {
     return isOpen;
   }
   */
-
-  isOpenFast(row, col) {
-    //faster implementation then looping through array
-    let nodeNumber = this._findNodeNumber(row, col);
-    if (nodeNumber < this.gridSize * this.gridSize) {
-      return this.grid.nodes[nodeNumber].isOpen;
-    } else {
-      throw new RangeError(
-        `The values for row and col should be within the bound of ${this.gridSize}, ${this.gridSize}`
-      );
-    }
-  }
 
   // is the site (row, col) "connected to the top row"?
   // currently recurse your way straight up to check for connection
@@ -84,9 +71,19 @@ module.exports = class Percolation {
 
   // does the system percolate?
   percolates() {
-
     //Does an individual node on the bottom row touch full nodes all the way to the top
+  }
 
+  _isOpen(row, col) {
+    //faster implementation then looping through array
+    let nodeNumber = this._findNodeNumber(row, col);
+    if (nodeNumber < this.gridSize * this.gridSize) {
+      return this.grid.nodes[nodeNumber].isOpen;
+    } else {
+      throw new RangeError(
+        `The values for row and col should be within the bound of ${this.gridSize}, ${this.gridSize}`
+      );
+    }
   }
 
   _print() {
