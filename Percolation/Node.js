@@ -3,12 +3,15 @@ module.exports = class Node {
   col;
   isOpen;
   isFull;
+  root;
+  size;
 
-  constructor(row, col, isOpen) {
+  constructor(row, col) {
     this.row = row;
     this.col = col;
-    this.isOpen = isOpen;
+    this.isOpen = false;
     this.isFull = false;
+    this.topRow = row === 0;
   }
 
   setFull() {
@@ -20,6 +23,8 @@ module.exports = class Node {
   }
 
   _print() {
-    console.log(`row: ${this.row}, col: ${this.col}, isOpen: ${this.isOpen}`);
+    console.log(
+      `row: ${this.row}, col: ${this.col}, isOpen: ${this.isOpen}, topRow: ${this.topRow}`
+    );
   }
 };
