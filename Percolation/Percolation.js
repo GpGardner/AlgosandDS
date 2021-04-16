@@ -54,13 +54,12 @@ module.exports = class Percolation {
     }
 
     //check if above is top row
-
     if (currentNode.isOpen) {
       let nodeAbove = this._nodeAbove(row, col);
       let nodeLeft = this._nodeLeft(row, col);
       let nodeRight = this._nodeRight(row, col);
 
-      if(nodeAbove.isOpen && this.isFull(nodeAbove.row, nodeAbove.col)){
+      if (nodeAbove.isOpen && this.isFull(nodeAbove.row, nodeAbove.col)) {
         return true;
       }
       if (nodeLeft.isOpen && this.isFull(nodeLeft.row, nodeLeft.col)) {
@@ -69,7 +68,6 @@ module.exports = class Percolation {
       if (nodeRight.isOpen && this.isFull(nodeRight.row, nodeRight.col)) {
         return true;
       }
-      
 
       // return this.isFull(nodeAbove.row, nodeAbove.col);
     }
@@ -85,6 +83,14 @@ module.exports = class Percolation {
   // does the system percolate?
   percolates() {
     //Does an individual node on the bottom row touch full nodes all the way to the top
+
+    for (let i = 0; i < this.gridSize; i++) {
+      if (this.isFull(this.gridSize - 1, i)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   _isOpen(row, col) {
@@ -93,6 +99,7 @@ module.exports = class Percolation {
     if (nodeNumber < this.gridSize * this.gridSize) {
       return this.grid.nodes[nodeNumber].isOpen;
     } else {
+      console.log(nodeNumber);
       throw new RangeError(
         `The values for row and col should be within the bound of ${this.gridSize}, ${this.gridSize}`
       );
