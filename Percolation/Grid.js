@@ -6,8 +6,7 @@ module.exports = class Grid {
   rows = 0;
   columns = 0;
 
-  constructor(n, randomVal) {
-    this.randomVal = randomVal;
+  constructor(n) {
     for (let i = 0; i < n; i++) {
       this.rows++;
       for (let j = 0; j < n; j++) {
@@ -46,6 +45,3 @@ module.exports = class Grid {
     });
   }
 };
-
-
-nodes = [0,1,2,3,4,5,6,7,8,9]
