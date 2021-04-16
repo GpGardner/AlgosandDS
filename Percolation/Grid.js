@@ -36,8 +36,8 @@ module.exports = class Grid {
     let color = '';
     this.nodes.forEach((node) => {
       string += node.isOpen
-        ? colors.green(`[${node.col}, ${node.row}]`)
-        : colors.red(`[${node.col}, ${node.row}]`);
+        ? colors.green(`[${node.row}, ${node.col}]`)
+        : colors.red(`[${node.row}, ${node.col}]`);
       count++;
       if (count === this.columns) {
         console.log(string);
