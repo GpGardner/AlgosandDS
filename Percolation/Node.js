@@ -23,8 +23,6 @@ module.exports = class Node {
   }
 
   _print() {
-    console.log(
-      `row: ${this.row}, col: ${this.col}, isOpen: ${this.isOpen}, topRow: ${this.topRow}`
-    );
+    return `row: ${this.row}, col: ${this.col}, isOpen: ${this.isOpen}, topRow: ${this.topRow}`;
   }
 };
