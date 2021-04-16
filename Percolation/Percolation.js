@@ -2,7 +2,7 @@ const Grid = require('./Grid');
 
 module.exports = class Percolation {
   //creates a grid
-  constructor(n, randomVal) {
+  constructor(n) {
     this.grid = new Grid(n);
     this.gridSize = n;
   }
