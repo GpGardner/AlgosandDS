@@ -14,10 +14,19 @@ module.exports = class Grid {
         if (j === 0) {
           this.columns++;
         }
-        let isOpen = Math.random() < this.randomVal;
-        if (isOpen) this.openNodes++;
-        this.nodes.push(new Node(i, j, isOpen));
+        this.nodes.push(new Node(i, j));
       }
+    }
+  }
+
+  union(nodeNumber1, nodeNumber2) {
+    if (nodeNumber1.root === nodeNumber2.root) return;
+    if (nodeNumber1.size < nodeNumber2.size) {
+      nodeNumber1.root = nodeNumber2.root;
+      nodeNumber2.size += nodeNumber1.root;
+    } else {
+      nodeNumber2.root = nodeNumber1.root;
+      nodeNumber1.size += nodeNumber2.root;
     }
   }
 
@@ -37,3 +46,6 @@ module.exports = class Grid {
     });
   }
 };
+
+
+nodes = [0,1,2,3,4,5,6,7,8,9]
