@@ -40,28 +40,41 @@ module.exports = class Percolation {
   // is the site (row, col) "connected to the top row"?
   // currently recurse your way straight up to check for connection
   isFull(row, col) {
+    //check inbounds
     if (row < 0 || col > this.gridSize) {
       return new Error(`Row or Column out of bounds`);
     }
 
+    //grab current
     let currentNode = this._findNode(row, col);
 
+    //check if top row if yes then full
     if (row === 0) {
       return currentNode.isOpen;
     }
 
-    let nodeAbove = this._nodeAbove(row, col);
-    if (currentNode.isOpen && row === 0) {
-      console.log(`Current Node Open: ${currentNode.isOpen}, Row: ${row}`);
+    //check if above is top row
 
-      return true;
+    if (currentNode.isOpen) {
+      let nodeAbove = this._nodeAbove(row, col);
+      let nodeLeft = this._nodeLeft(row, col);
+      let nodeRight = this._nodeRight(row, col);
+
+      if(nodeAbove.isOpen && this.isFull(nodeAbove.row, nodeAbove.col)){
+        return true;
+      }
+      if (nodeLeft.isOpen && this.isFull(nodeLeft.row, nodeLeft.col)) {
+        return true;
+      }
+      if (nodeRight.isOpen && this.isFull(nodeRight.row, nodeRight.col)) {
+        return true;
+      }
+      
+
+      // return this.isFull(nodeAbove.row, nodeAbove.col);
     }
 
-    if (nodeAbove.isOpen === false) {
-      return false;
-    }
-
-    return this.isFull(nodeAbove.row, nodeAbove.col);
+    return false;
   }
 
   // returns the number of open sites
@@ -101,16 +114,15 @@ module.exports = class Percolation {
   _nodeAbove(row, col) {
     let nodeAbove = this._findNode(row - 1, col);
     return nodeAbove;
+  }
 
-    // let nodeLeft = this._findNode(row, col - 1);
+  _nodeLeft(row, col) {
+    let nodeLeft = this._findNode(row, col - 1);
+    return nodeLeft;
+  }
 
-    // let nodeRight = this._findNode(row, col + 1);
-
-    // let nodeBelow = this._findNode(row + 1, col);
-
-    // nodeAbove.isOpen;
-    // nodeBelow.isOpen;
-    // nodeLeft.isOpen;
-    // nodeRight.isOpen;
+  _nodeRight(row, col) {
+    let nodeRight = this._findNode(row, col + 1);
+    return nodeRight;
   }
 };
