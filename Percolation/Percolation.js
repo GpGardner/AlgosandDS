@@ -1,6 +1,6 @@
 const Grid = require('./Grid');
 
-class Percolation {
+module.exports = class Percolation {
   //creates a grid
   constructor(n, randomVal) {
     this.grid = new Grid(n, randomVal);
@@ -9,6 +9,7 @@ class Percolation {
 
   // opens the site (row, col) if it is not open already
   open(row, col) {
+    
     let node = this._findNode(row, col);
     if (this.isOpenFast(row, col) === false) {
       node.isOpen = true;
@@ -52,12 +53,20 @@ class Percolation {
   // is the site (row, col) "connected to the top row"?
   // currently recurse your way straight up to check for connection
   isFull(row, col) {
-    let answer;
+    if (row < 0 || col > this.gridSize) {
+      return new Error(`Row or Column out of bounds`);
+    }
+
     let currentNode = this._findNode(row, col);
+
+    if (row === 0) {
+      return currentNode.isOpen;
+    }
+
     let nodeAbove = this._nodeAbove(row, col);
     if (currentNode.isOpen && row === 0) {
       console.log(`Current Node Open: ${currentNode.isOpen}, Row: ${row}`);
-      answer = true;
+
       return true;
     }
 
@@ -74,7 +83,11 @@ class Percolation {
   }
 
   // does the system percolate?
-  percolates() {}
+  percolates() {
+
+    //Does an individual node on the bottom row touch full nodes all the way to the top
+
+  }
 
   _print() {
     this.grid ? this.grid.print() : console.log('no grid');
@@ -103,16 +116,4 @@ class Percolation {
     // nodeLeft.isOpen;
     // nodeRight.isOpen;
   }
-}
-
-const perc = new Percolation(4, 0);
-console.log(perc.isOpenFast(0, 1));
-console.log(perc.numberOfOpenSites());
-perc._print();
-perc.open(0, 1);
-perc.open(1, 1);
-perc.open(2, 1);
-perc.open(3, 1);
-
-perc._print();
-console.log(perc.isFull(3, 1));
+};
