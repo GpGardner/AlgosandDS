@@ -1,5 +1,7 @@
 const Grid = require('./Grid');
 
+/* TODO: Add static helper*/
+
 module.exports = class Percolation {
   //creates a grid
   constructor(n) {
@@ -11,31 +13,21 @@ module.exports = class Percolation {
   open(row, col) {
     let node = this._findNode(row, col);
     if (this._isOpen(row, col) === false) {
-      node.isOpen = true;
+      node.open = true;
       this.grid.openNodes++;
-    } else {
-      throw new Error(`Node[${node.row}, ${node.col}] is already open`);
-    }
-  }
 
-  /*
-  // is the site (row, col) open?
-  isOpenSlow(row, col) {
-    //Check if [row, col] isOpen
-    let isOpen = false;
-
-    //this version will loop over the entire array.
-    //I can use math to find the specific entity in the array;
-    this.grid.nodes.filter((node) => {
-      if (row === node.row) {
-        if (col === node.col) {
-          isOpen = node.isOpen;
-        }
+      if (node.root === 0) {
+        node.full = true;
       }
-    });
-    return isOpen;
+
+      this.isFull2(row, col);
+    } else {
+      console.log(` ${(row, col)}: Already open`);
+    }
+    // else {
+    //   throw new Error(`Node[${node.row}, ${node.col}] is already open`);
+    // }
   }
-  */
 
   // is the site (row, col) "connected to the top row"?
   // currently recurse your way straight up to check for connection
@@ -45,32 +37,93 @@ module.exports = class Percolation {
       return new Error(`Row or Column out of bounds`);
     }
 
-    //grab current
     let currentNode = this._findNode(row, col);
 
-    //check if top row if yes then full
-    if (row === 0) {
-      return currentNode.isOpen;
-    }
+    if (currentNode.open) {
+      //check if top row if yes then full
+      if (row === 0) {
+        return true;
+      }
 
-    //check if above is top row
-    if (currentNode.isOpen) {
       let nodeAbove = this._nodeAbove(row, col);
       let nodeLeft = this._nodeLeft(row, col);
       let nodeRight = this._nodeRight(row, col);
 
-      if (nodeAbove.isOpen && this.isFull(nodeAbove.row, nodeAbove.col)) {
-        return true;
-      }
-      if (nodeLeft.isOpen && this.isFull(nodeLeft.row, nodeLeft.col)) {
-        return true;
-      }
-      if (nodeRight.isOpen && this.isFull(nodeRight.row, nodeRight.col)) {
+      if (nodeAbove.full || nodeLeft.full || nodeRight.full) {
         return true;
       }
 
-      // return this.isFull(nodeAbove.row, nodeAbove.col);
+      if (nodeAbove.open && this.isFull(nodeAbove.row, nodeAbove.col)) {
+        return true;
+      }
+
+      if (nodeAbove.full)
+        if (nodeLeft.open && this.isFull(nodeLeft.row, nodeLeft.col)) {
+          return true;
+        }
+      if (nodeRight.open && this.isFull(nodeRight.row, nodeRight.col)) {
+        return true;
+      }
     }
+
+    return false;
+  }
+
+  // union(nodeNumber1, nodeNumber2) {
+  //   if (nodeNumber1.root === nodeNumber2.root) return;
+  //   if (nodeNumber1.size < nodeNumber2.size) {
+  //     nodeNumber1.root = nodeNumber2.root;
+  //     nodeNumber2.size += nodeNumber1.root;
+  //   } else {
+  //     nodeNumber2.root = nodeNumber1.root;
+  //     nodeNumber1.size += nodeNumber2.root;
+  //   }
+  // }
+
+  isFull2(row, col) {
+    if (row < 0 || col > this.gridSize) {
+      return new Error(`Row or Column out of bounds`);
+    }
+
+    let currentNode = this._findNode(row, col);
+
+    if (currentNode.open === false) {
+      console.log(`${currentNode._printFull()}`);
+      return false;
+    }
+
+    if (currentNode.full) {
+      return true;
+    }
+
+    //check if top row if yes then full
+    if (row === 0 && currentNode.open) {
+      currentNode.full === true;
+      return true;
+    }
+
+    let nodeAbove = this._nodeAbove(row, col);
+    let nodeLeft, nodeRight;
+
+    if (row > 0) {
+      nodeLeft = this._nodeLeft(row, col);
+    }
+    if (row < this.gridSize) {
+      nodeRight = this._nodeRight(row, col);
+    }
+
+    if (nodeAbove.full) {
+      return true;
+    }
+
+    if (nodeLeft) {
+      return nodeLeft.full;
+    }
+    if (nodeRight) {
+      return nodeRight.full;
+    }
+
+    console.log('nothing true');
 
     return false;
   }
@@ -97,7 +150,7 @@ module.exports = class Percolation {
     //faster implementation then looping through array
     let nodeNumber = this._findNodeNumber(row, col);
     if (nodeNumber < this.gridSize * this.gridSize) {
-      return this.grid.nodes[nodeNumber].isOpen;
+      return this.grid.nodes[nodeNumber].open;
     } else {
       console.log(nodeNumber);
       throw new RangeError(
