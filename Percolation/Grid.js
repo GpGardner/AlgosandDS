@@ -19,23 +19,11 @@ module.exports = class Grid {
     }
   }
 
-  union(nodeNumber1, nodeNumber2) {
-    if (nodeNumber1.root === nodeNumber2.root) return;
-    if (nodeNumber1.size < nodeNumber2.size) {
-      nodeNumber1.root = nodeNumber2.root;
-      nodeNumber2.size += nodeNumber1.root;
-    } else {
-      nodeNumber2.root = nodeNumber1.root;
-      nodeNumber1.size += nodeNumber2.root;
-    }
-  }
-
   print() {
     let string = '';
     let count = 0;
-    let color = '';
     this.nodes.forEach((node) => {
-      string += node.isOpen
+      string += node.open
         ? colors.green(`[${node.row}, ${node.col}]`)
         : colors.red(`[${node.row}, ${node.col}]`);
       count++;
