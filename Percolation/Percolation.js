@@ -12,75 +12,30 @@ module.exports = class Percolation {
   // opens the site (row, col) if it is not open already
   open(row, col) {
     let node = this._findNode(row, col);
-    if (this._isOpen(row, col) === false) {
+    if (!node.open) {
       node.open = true;
       this.grid.openNodes++;
 
       if (node.root === 0) {
         node.full = true;
       }
-
-      this.isFull2(row, col);
     } else {
-      console.log(` ${(row, col)}: Already open`);
+      throw new Error(`Node[${node.row}, ${node.col}] is already open`);
     }
-    // else {
-    //   throw new Error(`Node[${node.row}, ${node.col}] is already open`);
-    // }
   }
 
-  // is the site (row, col) "connected to the top row"?
-  // currently recurse your way straight up to check for connection
+  union(pos1, pos2) {
+    if (pos1.root === pos2.root) return;
+    if (pos1.size < pos2.size) {
+      pos1.root = pos2.root;
+      pos2.size += pos1.root;
+    } else {
+      pos2.root = pos1.root;
+      pos1.size += pos2.root;
+    }
+  }
+
   isFull(row, col) {
-    //check inbounds
-    if (row < 0 || col > this.gridSize) {
-      return new Error(`Row or Column out of bounds`);
-    }
-
-    let currentNode = this._findNode(row, col);
-
-    if (currentNode.open) {
-      //check if top row if yes then full
-      if (row === 0) {
-        return true;
-      }
-
-      let nodeAbove = this._nodeAbove(row, col);
-      let nodeLeft = this._nodeLeft(row, col);
-      let nodeRight = this._nodeRight(row, col);
-
-      if (nodeAbove.full || nodeLeft.full || nodeRight.full) {
-        return true;
-      }
-
-      if (nodeAbove.open && this.isFull(nodeAbove.row, nodeAbove.col)) {
-        return true;
-      }
-
-      if (nodeAbove.full)
-        if (nodeLeft.open && this.isFull(nodeLeft.row, nodeLeft.col)) {
-          return true;
-        }
-      if (nodeRight.open && this.isFull(nodeRight.row, nodeRight.col)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // union(nodeNumber1, nodeNumber2) {
-  //   if (nodeNumber1.root === nodeNumber2.root) return;
-  //   if (nodeNumber1.size < nodeNumber2.size) {
-  //     nodeNumber1.root = nodeNumber2.root;
-  //     nodeNumber2.size += nodeNumber1.root;
-  //   } else {
-  //     nodeNumber2.root = nodeNumber1.root;
-  //     nodeNumber1.size += nodeNumber2.root;
-  //   }
-  // }
-
-  isFull2(row, col) {
     if (row < 0 || col > this.gridSize) {
       return new Error(`Row or Column out of bounds`);
     }
@@ -88,7 +43,7 @@ module.exports = class Percolation {
     let currentNode = this._findNode(row, col);
 
     if (currentNode.open === false) {
-      console.log(`${currentNode._printFull()}`);
+      // console.log(`${currentNode._printFull()}`);
       return false;
     }
 
@@ -129,6 +84,7 @@ module.exports = class Percolation {
   }
 
   // returns the number of open sites
+
   numberOfOpenSites() {
     return this.grid.openNodes;
   }
@@ -138,7 +94,8 @@ module.exports = class Percolation {
     //Does an individual node on the bottom row touch full nodes all the way to the top
 
     for (let i = 0; i < this.gridSize; i++) {
-      if (this.isFull(this.gridSize - 1, i)) {
+      if (this._findNode(this.gridSize - 1, i).full) {
+        console.log('IT PERCOLATES~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         return true;
       }
     }
@@ -146,25 +103,20 @@ module.exports = class Percolation {
     return false;
   }
 
-  _isOpen(row, col) {
-    //faster implementation then looping through array
-    let nodeNumber = this._findNodeNumber(row, col);
-    if (nodeNumber < this.gridSize * this.gridSize) {
-      return this.grid.nodes[nodeNumber].open;
-    } else {
-      console.log(nodeNumber);
-      throw new RangeError(
-        `The values for row and col should be within the bound of ${this.gridSize}, ${this.gridSize}`
-      );
-    }
-  }
-
   _print() {
     this.grid ? this.grid.print() : console.log('no grid');
   }
 
   _findNode(row, col) {
-    return this.grid.nodes[this._findNodeNumber(row, col)];
+    console.log(`Find node called for ${row}, ${col}`);
+    if (
+      row >= 0 &&
+      row <= this.gridSize - 1 &&
+      col >= 0 &&
+      col <= this.gridSize - 1
+    ) {
+      return this.grid.nodes[this._findNodeNumber(row, col)];
+    }
   }
 
   _findNodeNumber(row, col) {
@@ -172,17 +124,18 @@ module.exports = class Percolation {
   }
 
   _nodeAbove(row, col) {
-    let nodeAbove = this._findNode(row - 1, col);
-    return nodeAbove;
+    return this._findNode(row - 1, col);
+  }
+
+  _nodeBelow(row, col) {
+    return this._findNode(row + 1, col);
   }
 
   _nodeLeft(row, col) {
-    let nodeLeft = this._findNode(row, col - 1);
-    return nodeLeft;
+    return this._findNode(row, col - 1);
   }
 
   _nodeRight(row, col) {
-    let nodeRight = this._findNode(row, col + 1);
-    return nodeRight;
+    return this._findNode(row, col + 1);
   }
 };
