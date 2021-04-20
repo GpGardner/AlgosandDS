@@ -19,63 +19,66 @@ module.exports = class Percolation {
       if (node.root === 0) {
         node.full = true;
       }
+
+      this.isFull(node) ? (node.full = true) : console.log("node wasn't full");
+    }
+    // else {
+    //   throw new Error(`Node[${node.row}, ${node.col}] is already open`);
+    // }
+  }
+
+  union(node1, node2) {
+    if (node1.root === node2.root) return;
+    if (node1.size < node2.size) {
+      node1.root = node2.root;
+      node2.size += node1.root;
     } else {
-      throw new Error(`Node[${node.row}, ${node.col}] is already open`);
+      node2.root = node1.root;
+      node1.size += node2.root;
     }
   }
 
-  union(pos1, pos2) {
-    if (pos1.root === pos2.root) return;
-    if (pos1.size < pos2.size) {
-      pos1.root = pos2.root;
-      pos2.size += pos1.root;
-    } else {
-      pos2.root = pos1.root;
-      pos1.size += pos2.root;
-    }
-  }
-
-  isFull(row, col) {
-    if (row < 0 || col > this.gridSize) {
-      return new Error(`Row or Column out of bounds`);
-    }
-
-    let currentNode = this._findNode(row, col);
-
-    if (currentNode.open === false) {
-      // console.log(`${currentNode._printFull()}`);
+  isFull(node) {
+    if (node.open === false) {
       return false;
     }
 
-    if (currentNode.full) {
+    if (node.full) {
       return true;
     }
-
+    console.log(node);
     //check if top row if yes then full
-    if (row === 0 && currentNode.open) {
-      currentNode.full === true;
+    if (node.row === 0 && node.open) {
+      node.full === true;
       return true;
     }
 
-    let nodeAbove = this._nodeAbove(row, col);
+    let nodeAbove = this._nodeAbove(node.row, node.col);
     let nodeLeft, nodeRight;
 
-    if (row > 0) {
-      nodeLeft = this._nodeLeft(row, col);
+    if (node.row > 0) {
+      nodeLeft = this._nodeLeft(node.row, node.col);
     }
-    if (row < this.gridSize) {
-      nodeRight = this._nodeRight(row, col);
+    if (node.row < this.gridSize) {
+      nodeRight = this._nodeRight(node.row, node.col);
     }
 
     if (nodeAbove.full) {
+      this.union(node, nodeAbove);
+      console.log(`NODE ABOVE CHECK ${nodeAbove}`);
       return true;
     }
 
-    if (nodeLeft) {
-      return nodeLeft.full;
+    if (nodeLeft && nodeLeft.full) {
+      console.log(`NODE LEFT CHECK ${nodeLeft}`);
+      this.union(node, nodeLeft);
+
+      return true;
     }
-    if (nodeRight) {
-      return nodeRight.full;
+    if (nodeRight && nodeRight.full) {
+      this.union(node, nodeRight);
+      console.log(`NODE RIGHT CHECK ${nodeRight}`);
+      return true;
     }
 
     console.log('nothing true');
@@ -94,7 +97,9 @@ module.exports = class Percolation {
     //Does an individual node on the bottom row touch full nodes all the way to the top
 
     for (let i = 0; i < this.gridSize; i++) {
-      if (this._findNode(this.gridSize - 1, i).full) {
+      let checkNode = this._findNode(this.gridSize - 1, i);
+      console.log(checkNode);
+      if (this.isFull(checkNode)) {
         console.log('IT PERCOLATES~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         return true;
       }
