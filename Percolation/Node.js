@@ -4,6 +4,7 @@ module.exports = class Node {
   open;
   full;
   root;
+  size;
 
   constructor(row, col) {
     this.row = row;
@@ -24,9 +25,5 @@ module.exports = class Node {
 
   _print() {
     return `row: ${this.row}, col: ${this.col}`;
-  }
-
-  _printFull() {
-    return `row: ${this.row}, col: ${this.col}, open: ${this.open}, full: ${this.full}, topRow: ${this.topRow}, root ${this.root}}`;
   }
 };
