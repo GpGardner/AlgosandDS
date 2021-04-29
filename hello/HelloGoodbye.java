@@ -1,25 +1,14 @@
-import java.util.ArrayList;
+/* *****************************************************************************
+ *  Name:              George Gardner
+ *  Coursera User ID:  123456
+ *  Last modified:     4/22/21
+ **************************************************************************** */
 
 public class HelloGoodbye {
-  public static void main(String[] args) {
-    // String answer = formatNames(args);
+    public static void main(String[] args) {
+        System.out.println("Hello " + args[0] + " and " + args[1]);
 
-    System.out.println("Hello " + formatNames(args));
-    System.out.println("Goodbye " + otherWay(args));
+        System.out.println("Goodbye " + args[0] + " and " + args[1]);
 
-  }
-
-  public static String formatNames(String[] args) {
-
-    String answer = String.format("%s and %s", args[0], args[1]);
-
-    return answer;
-  }
-
-  public static String otherWay(String[] args) {
-
-    String answer = String.format("%s and %s", args[1], args[0]);
-
-    return answer;
-  }
+    }
 }

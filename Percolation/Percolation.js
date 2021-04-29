@@ -15,30 +15,35 @@ module.exports = class Percolation {
     if (!node.open) {
       node.open = true;
       this.grid.openNodes++;
+    }
+  }
 
-      if (node.root === 0) {
-        node.full = true;
+  //look at two nodes, both open? link them
+  union(node1, node2) {
+    if (node1.open && node2.open) {
+      console.log(
+        `about to open up ${(node1.row, node1.col)}, ${(node1.row, node2.col)} `
+      );
+      if (node1.root === node2.root) return;
+
+      if (node1.root === 0 || node2.root === 0) {
+        node1.root = 0;
+        node2.root = 0;
       }
 
-      this.isFull(node) ? (node.full = true) : console.log("node wasn't full");
-    }
-    // else {
-    //   throw new Error(`Node[${node.row}, ${node.col}] is already open`);
-    // }
-  }
-
-  union(node1, node2) {
-    if (node1.root === node2.root) return;
-    if (node1.size < node2.size) {
-      node1.root = node2.root;
-      node2.size += node1.root;
-    } else {
-      node2.root = node1.root;
-      node1.size += node2.root;
+      if (node1.size < node2.size) {
+        node1.root = node2.root;
+        node2.size += node1.root;
+      } else {
+        node2.root = node1.root;
+        node1.size += node2.root;
+      }
     }
   }
 
-  isFull(node) {
+  //created spaghetti code, refactoring
+  checkFull(row, col) {
+    let node = this._findNode(row, col);
     if (node.open === false) {
       return false;
     }
@@ -46,15 +51,15 @@ module.exports = class Percolation {
     if (node.full) {
       return true;
     }
-    console.log(node);
-    //check if top row if yes then full
+
     if (node.row === 0 && node.open) {
-      node.full === true;
+      node.full = true;
       return true;
     }
+    let nodeUp = this._nodeAbove(node.row, node.col);
 
-    let nodeAbove = this._nodeAbove(node.row, node.col);
-    let nodeLeft, nodeRight;
+    let nodeLeft, nodeRight, nodeDown;
+    // let answer;
 
     if (node.row > 0) {
       nodeLeft = this._nodeLeft(node.row, node.col);
@@ -62,28 +67,43 @@ module.exports = class Percolation {
     if (node.row < this.gridSize) {
       nodeRight = this._nodeRight(node.row, node.col);
     }
-
-    if (nodeAbove.full) {
-      this.union(node, nodeAbove);
-      console.log(`NODE ABOVE CHECK ${nodeAbove}`);
-      return true;
+    if (node.col < this.gridSize) {
+      nodeDown = this._nodeBelow(node.row, node.col);
     }
 
-    if (nodeLeft && nodeLeft.full) {
-      console.log(`NODE LEFT CHECK ${nodeLeft}`);
-      this.union(node, nodeLeft);
-
-      return true;
-    }
-    if (nodeRight && nodeRight.full) {
-      this.union(node, nodeRight);
-      console.log(`NODE RIGHT CHECK ${nodeRight}`);
-      return true;
+    if (nodeUp) {
+      console.log(
+        `NODE ABOVE CHECK ${nodeUp.row}, ${nodeUp.col} - ${nodeUp.full}`
+      );
+      if (nodeUp.full) {
+        node.full = true;
+        this.answer = true;
+      }
     }
 
-    console.log('nothing true');
+    if (nodeLeft) {
+      console.log(`NODE LEFT CHECK ${nodeLeft.row}, ${nodeLeft.col}`);
+      if (nodeLeft.full) {
+        node.full = true;
+        this.answer = true;
+      }
+    }
 
-    return false;
+    if (nodeRight) {
+      console.log(`NODE RIGHT CHECK ${nodeRight.row}, ${nodeRight.col}`);
+      if (nodeRight.full) {
+        node.full = true;
+        this.answer = true;
+      }
+    }
+
+    if (nodeDown) {
+      console.log(`NODE BOTTOM CHECK ${nodeDown.row}, ${nodeDown.col}`);
+      if (nodeDown.full) {
+        node.full = true;
+        this.answer = true;
+      }
+    }
   }
 
   // returns the number of open sites
@@ -98,8 +118,8 @@ module.exports = class Percolation {
 
     for (let i = 0; i < this.gridSize; i++) {
       let checkNode = this._findNode(this.gridSize - 1, i);
-      console.log(checkNode);
-      if (this.isFull(checkNode)) {
+      // console.log(checkNode);
+      if (this.checkFull(checkNode)) {
         console.log('IT PERCOLATES~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         return true;
       }
@@ -109,11 +129,10 @@ module.exports = class Percolation {
   }
 
   _print() {
-    this.grid ? this.grid.print() : console.log('no grid');
+    this.grid ? this.grid.print() : null;
   }
 
   _findNode(row, col) {
-    console.log(`Find node called for ${row}, ${col}`);
     if (
       row >= 0 &&
       row <= this.gridSize - 1 &&

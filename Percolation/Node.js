@@ -11,6 +11,10 @@ module.exports = class Node {
     this.col = col;
     this.open = false;
     this.full = false;
+    this.size = 1;
+
+    //find out if the node is in the top row, 
+    //the top row is considered one root node for this example
     this.topRow = row === 0;
     this.topRow ? (this.root = 0) : null;
   }
@@ -24,6 +28,6 @@ module.exports = class Node {
   }
 
   _print() {
-    return `row: ${this.row}, col: ${this.col}`;
+    return `row: ${this.row}, col: ${this.col} root: ${root}, size: ${size}`;
   }
 };

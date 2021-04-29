@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Princeton Algoriths + DataStructures">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/percolation.zip!/" />
+      <root url="jar://$PROJECT_DIR$/hello.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
